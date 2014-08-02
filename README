@@ -1,0 +1,28 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4995
+
+vCoolor is a Vim plugin that allows using a GTK+ color selection dialog via Yad (http://sourceforge.net/projects/yad-dialog/) directly from the editor.
+
+What this plugin do:
+* Insert or modify a hex color even if there are many colors in 1 line.
+* Modify a rgb color (Only one by line).
+
+What this plugin doesn't do:
+* Insert rgb (Can implement it if needed), rgba, hsv, hsva colors.
+* Modify rgba, hsv (Working on it), hsva colors.
+
+To get the last version or to have more informations check the github repo > https://github.com/KabbAmine/vCoolor.vim
+
+Don't forget to rate it if you find it useful ( Or useless ;) ).
+
+P.S: Works only on GNU/Linux.
+
+usage
+=====
+
+In both NORMAL and INSERT modes, only 1 shortcut is needed: `<Alt-C>` (I find it very convenient :D), but he may be not working on terminal.
+
+Use it:
+* To insert a color anywhere.
+* To modify the current hex or rgb color.
+
+A short screencast here > https://www.youtube.com/watch?v=ZBJ_-Uxm55U
