@@ -1,8 +1,8 @@
 " Simple color selector/picker plugin.
-" Version: 0.2
+" Version: 0.3
 
 " Creation     : 2014-07-26
-" Modification : 2014-08-04
+" Modification : 2014-08-06
 " Maintainer   : Kabbaj Amine <amine.kabb@gmail.com>
 " License      : This file is placed in the public domain.
 
@@ -48,6 +48,16 @@ if has('unix') && executable("yad")
     endif
     inoremap <unique> <script> <Plug>vCoolorI <SID>VCI
     inoremap <silent> <SID>VCI <Esc>:call <SID>VCoolor()<CR>a
+    if !hasmapto('<Plug>vCoolorR', 'n')
+        nmap <unique> <A-r> <Plug>vCoolorR
+    endif
+    nnoremap <unique> <script> <Plug>vCoolorR <SID>VCR
+    nnoremap <silent> <SID>VCR :call <SID>VCoolorR()<CR>
+    if !hasmapto('<Plug>vCoolorRI', 'i')
+        imap <unique> <A-r> <Plug>vCoolorRI
+    endif
+    inoremap <unique> <script> <Plug>vCoolorRI <SID>VCRI
+    inoremap <silent> <SID>VCRI <Esc>:call <SID>VCoolorR()<CR>a
 endif
 " }
 
@@ -337,7 +347,7 @@ function s:RgbPerc2Rgb(rgbPercCol)
     " 100%, 0%, 0% => 255, 0, 0
 
     let l:rgbPercCol = substitute(a:rgbPercCol, " ", "", "g")
-    let l:rgbPercCol = substitute(a:rgbPercCol, "%", "", "g")   " Remove %.
+    let l:rgbPercCol = substitute(l:rgbPercCol, "%", "", "g")   " Remove %.
     let l:rgbPercColL = split(l:rgbPercCol, ",")
 
     let l:color = ""
@@ -397,10 +407,10 @@ function s:Hex2RgbPerc(hexCol)
     " Convert from hex to rgb (%):
     " #FF00FF => 100%, 0, 100%
 
-	let l:rgbCol = s:Hex2Rgb(a:hexCol)
-	let l:color = s:Rgb2RgbPerc(l:rgbCol)
+    let l:rgbCol = s:Hex2Rgb(a:hexCol)
+    let l:color = s:Rgb2RgbPerc(l:rgbCol)
 
-	return l:color
+    return l:color
 
 endfunction
 
@@ -418,6 +428,15 @@ function s:VCoolor()
     endif
 
     call setpos(".", s:position)
+
+endfunction
+function s:VCoolorR()
+	" Insert a color in rgb mode.
+	
+	let l:newCol = s:ExecPicker("")
+	if !empty(l:newCol)
+		execute ":normal argb(".s:Hex2Rgb(l:newCol).")"
+	endif
 
 endfunction
 
