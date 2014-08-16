@@ -1,8 +1,8 @@
 " Simple color selector/picker plugin.
-" Version: 0.7
+" Version: 0.8
 
 " Creation     : 2014-07-26
-" Modification : 2014-08-14
+" Modification : 2014-08-16
 " Maintainer   : Kabbaj Amine <amine.kabb@gmail.com>
 " License      : This file is placed in the public domain.
 
@@ -84,6 +84,11 @@ inoremap <silent> <SID>VCHI <Esc>:call <SID>VCoolorH()<CR>a
 " =====================================================================
 
 " {
+" Set new color in lowercase if the global variable is set to 1.
+if !exists("g:vcoolor_lowercase")
+	let g:vcoolor_lowercase = 0
+endif
+
 " 140 html base colors.
 let s:colorNames = {
             \ 'aliceblue': '#F0F8FF',
@@ -341,16 +346,31 @@ function s:SetColorByType(oldColor, newCol)
 
 endfunction
 function s:ExecPicker(hexColor)
-    " Execute the command for the color picker.
+	" Execute the appropriate command for the color picker and
+	" return the new hexadecimal color.
 
 	if has("win32")
 		let l:comm = s:path . "/../win32/cpicker.exe ".a:hexColor
 	elseif has("mac")
-        let l:comm = s:path . "/../osx/color-picker \"".a:hexColor."\""
+		let l:comm = s:path . "/../osx/color-picker \"".a:hexColor."\""
 	else
-		let l:comm = "yad --title=\"vCoolor\" --color --init-color=\"".a:hexColor."\" --on-top --skip-taskbar --center"
+		if executable("yad")
+			let l:comm = "yad --title=\"vCoolor\" --color --init-color=\"".a:hexColor."\" --on-top --skip-taskbar --center 2> /dev/null"
+		else
+			let l:comm = "zenity --title=\"vCoolor\" --color-selection --color=\"".a:hexColor."\" 2> /dev/null"
+		endif
 	endif
-    let s:newCol = toupper(system(l:comm))
+
+	let s:newCol = system(l:comm)
+	if strlen(s:newCol) >= 13
+		let s:newCol = s:newCol[0:2].s:newCol[5:6].s:newCol[9:10]
+	endif
+
+	if (g:vcoolor_lowercase == 1)
+		let s:newCol = tolower(s:newCol)
+	else
+		let s:newCol = toupper(s:newCol)
+	endif
 
     return s:newCol
 
@@ -431,7 +451,7 @@ function s:Hex2Lit(hexCol)
     " Convert from hex to literal name.
     " #FF0000 => red
 
-    let l:colIndex = index(values(s:colorNames), a:hexCol)
+    let l:colIndex = index(values(s:colorNames), toupper(a:hexCol))
 
     if l:colIndex != -1
         let s:color =get(keys(s:colorNames), l:colIndex)

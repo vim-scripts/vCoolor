@@ -12,9 +12,9 @@ What this plugin doesn't do:
 * Insert or modify rgba or hsla colors.
 
 
-In GNU/Linux it uses a simple GTK+ dialog via Yad (http://sourceforge.net/projects/yad-dialog/).
+In GNU/Linux it uses a simple GTK+ dialog.
 In windows it uses colorpicker-windows-commandline (https://github.com/jaxbot/colorpicker-windows-commandline) (The binary is included in the plugin).
-In MAC OS it uses a ruby script (https://github.com/KabbAmine/vCoolor.vim/tree/master/osx/color-picker).
+In MAC OS it uses a ruby script (https://github.com/KabbAmine/vCoolor.vim/tree/master/osx/color-picker) to trigger the system color picker.
 
 
 To get the last version or to have more informations check the github repo > https://github.com/KabbAmine/vCoolor.vim
