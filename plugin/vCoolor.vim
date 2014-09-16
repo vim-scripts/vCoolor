@@ -2,15 +2,15 @@
 " Version: 0.8
 
 " Creation     : 2014-07-26
-" Modification : 2014-08-16
+" Modification : 2014-09-12
 " Maintainer   : Kabbaj Amine <amine.kabb@gmail.com>
 " License      : This file is placed in the public domain.
 
 
-if exists("g:loadedVCoolor")
+if exists("g:vcoolor_loaded")
     finish
 endif
-let g:loadedVCoolor = 1
+let g:vcoolor_loaded = 1
 
 " To avoid conflict problems.
 let s:saveCpoptions = &cpoptions
@@ -24,6 +24,7 @@ set cpoptions&vim
 command! VCoolor call s:VCoolor()
 command! VCoolorR call s:VCoolorR()
 command! VCoolorH call s:VCoolorH()
+command! VCase call s:SetCase()
 
 " For debug purpose.
 if exists(":GetColor") != 2
@@ -232,6 +233,7 @@ let s:colorNames = {
             \ 'yellow': '#FFFF00',
             \ 'yellowgreen': '#9ACD32'
             \ }
+
 " Keep track of current working directory of script
 let s:path = expand('<sfile>:p:h')
 " }
@@ -374,6 +376,17 @@ function s:ExecPicker(hexColor)
 
     return s:newCol
 
+endfunction
+function s:SetCase()
+	" Set returned hex color case.
+
+	if g:vcoolor_lowercase == 0
+		let g:vcoolor_lowercase = 1
+		echo "Hex color in lowercase"
+	else
+		let g:vcoolor_lowercase = 0
+		echo "Hex color in uppercase"
+	endif
 endfunction
 
 " Conversion functions
