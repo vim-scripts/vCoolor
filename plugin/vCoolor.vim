@@ -1,8 +1,8 @@
 " Simple color selector/picker plugin.
-" Version: 0.8
+" Version: 1.0
 
 " Creation     : 2014-07-26
-" Modification : 2014-09-12
+" Modification : 2014-09-28
 " Maintainer   : Kabbaj Amine <amine.kabb@gmail.com>
 " License      : This file is placed in the public domain.
 
@@ -22,14 +22,13 @@ set cpoptions&vim
 " {
 " Main commands.
 command! VCoolor call s:VCoolor()
-command! VCoolorR call s:VCoolorR()
-command! VCoolorH call s:VCoolorH()
+command! -nargs=1 VCoolIns call s:VCoolIns(<f-args>)
 command! VCase call s:SetCase()
 
 " For debug purpose.
-if exists(":GetColor") != 2
-    command! GetColor :echo s:GetCurrCol()
-endif
+" if exists(":GetColor") != 2
+"     command! GetColor :echo s:GetCurrCol()
+" endif
 
 " Conversion commands.
 let s:commandNames = [
@@ -49,36 +48,17 @@ endfor
 " =====================================================================
 
 " {
-if !hasmapto('<Plug>vCoolorC', 'n')
-    nmap <unique> <A-c> <Plug>vCoolorC
-endif
-nnoremap <unique> <script> <Plug>vCoolorC <SID>VCC
-nnoremap <silent> <SID>VCC :call <SID>VCoolor()<CR>
-if !hasmapto('<Plug>vCoolorI', 'i')
-    imap <unique> <A-c> <Plug>vCoolorI
-endif
-inoremap <unique> <script> <Plug>vCoolorI <SID>VCI
-inoremap <silent> <SID>VCI <Esc>:call <SID>VCoolor()<CR>a
-if !hasmapto('<Plug>vCoolorRC', 'n')
-    nmap <unique> <A-r> <Plug>vCoolorRC
-endif
-nnoremap <unique> <script> <Plug>vCoolorRC <SID>VCRC
-nnoremap <silent> <SID>VCRC :call <SID>VCoolorR()<CR>
-if !hasmapto('<Plug>vCoolorRI', 'i')
-    imap <unique> <A-r> <Plug>vCoolorRI
-endif
-inoremap <unique> <script> <Plug>vCoolorRI <SID>VCRI
-inoremap <silent> <SID>VCRI <Esc>:call <SID>VCoolorR()<CR>a
-if !hasmapto('<Plug>vCoolorHC', 'n')
-    nmap <unique> <A-v> <Plug>vCoolorHC
-endif
-nnoremap <unique> <script> <Plug>vCoolorHC <SID>VCHC
-nnoremap <silent> <SID>VCHC :call <SID>VCoolorH()<CR>
-if !hasmapto('<Plug>vCoolorHI', 'i')
-    imap <unique> <A-v> <Plug>vCoolorHI
-endif
-inoremap <unique> <script> <Plug>vCoolorHI <SID>VCHI
-inoremap <silent> <SID>VCHI <Esc>:call <SID>VCoolorH()<CR>a
+let s:vcoolorMap = exists('g:vcoolor_map') ? g:vcoolor_map : '<A-c>'
+execute "nmap <silent> ".s:vcoolorMap." :VCoolor<CR>"
+execute "imap <silent> ".s:vcoolorMap." <left><C-o>:VCoolor<CR><right>"
+
+let s:vcoolInsRMap = exists('g:vcool_ins_rgb_map') ? g:vcool_ins_rgb_map : '<A-r>'
+execute "nmap <silent> ".s:vcoolInsRMap." :VCoolIns r<CR>"
+execute "imap <silent> ".s:vcoolInsRMap." <left><C-o>:VCoolIns r<CR><right>"
+
+let s:vcoolInsHMap = exists('g:vcool_ins_hsl_map') ? g:vcool_ins_hsl_map : '<A-v>'
+execute "nmap <silent> ".s:vcoolInsHMap." :silent VCoolIns h<CR>"
+execute "imap <silent> ".s:vcoolInsHMap." <left><C-o>:VCoolIns h<CR><right>"
 " }
 
 " VARIABLES
@@ -352,9 +332,9 @@ function s:ExecPicker(hexColor)
 	" return the new hexadecimal color.
 
 	if has("win32")
-		let l:comm = s:path . "/../win32/cpicker.exe ".a:hexColor
+		let l:comm = s:path . "/../pickers/win32/cpicker.exe ".a:hexColor
 	elseif has("mac")
-		let l:comm = s:path . "/../osx/color-picker \"".a:hexColor."\""
+		let l:comm = s:path . "/../pickers/osx/color-picker \"".a:hexColor."\""
 	else
 		if executable("yad")
 			let l:comm = "yad --title=\"vCoolor\" --color --init-color=\"".a:hexColor."\" --on-top --skip-taskbar --center 2> /dev/null"
@@ -368,11 +348,7 @@ function s:ExecPicker(hexColor)
 		let s:newCol = s:newCol[0:2].s:newCol[5:6].s:newCol[9:10]
 	endif
 
-	if (g:vcoolor_lowercase == 1)
-		let s:newCol = tolower(s:newCol)
-	else
-		let s:newCol = toupper(s:newCol)
-	endif
+	let s:newCol = g:vcoolor_lowercase == 1 ? tolower(s:newCol) : toupper(s:newCol)
 
     return s:newCol
 
@@ -664,21 +640,18 @@ function s:VCoolor()
     call setpos(".", s:position)
 
 endfunction
-function s:VCoolorR()
-	" Insert a color in rgb mode.
+function s:VCoolIns(type)
+	" Insert color of type:
+	" - r: rgb mode.
+	" - h: hsl mode.
 
 	let l:newCol = s:ExecPicker("")
 	if !empty(l:newCol)
-		execute ":normal argb(".s:Hex2Rgb(l:newCol).")"
-	endif
-
-endfunction
-function s:VCoolorH()
-	" Insert a color in hsl mode.
-
-	let l:newCol = s:ExecPicker("")
-	if !empty(l:newCol)
-		execute ":normal ahsl(".s:Hex2Hsl(l:newCol).")"
+		if a:type == 'r'
+			execute ":normal argb(".s:Hex2Rgb(l:newCol).")"
+		elseif a:type == 'h'
+			execute ":normal ahsl(".s:Hex2Hsl(l:newCol).")"
+		endif
 	endif
 
 endfunction
