@@ -3,13 +3,14 @@ This is a mirror of http://www.vim.org/scripts/script.php?script_id=4995
 vCoolor is a Vim plugin that allows using a color picker/selector directly from the editor.
 
 What this plugin do:
-* Insert hex, rgb or hsl color anywhere.
+* Insert hex, rgb, rgba (1 in opacity) or hsl color anywhere.
 * Modify hex color even if there are many colors in 1 line.
 * Modify a rgb color with 0-255 values or % (Only one by line).
 * Modify a hsl color (Only one by line).
+* Modify a rgba color but don't change opacity (Only one by line).
 
 What this plugin doesn't do:
-* Insert or modify rgba or hsla colors.
+* Insert or modify hsla colors.
 
 In GNU/Linux it uses a simple GTK+ dialog.
 In windows it uses colorpicker-windows-commandline (https://github.com/jaxbot/colorpicker-windows-commandline) (The binary is included in the plugin).
@@ -26,10 +27,11 @@ In both NORMAL and INSERT modes, only 1 shortcut is needed: `<Alt-C>` (I find it
 
 Use it:
 * To insert a color anywhere.
-* To modify the current hex, rgb or hsl color.
+* To modify the current hex, rgb, rgba or hsl color.
 
 Using `<Alt-R>` you can insert a rgb color anywhere (NORMAL and INSERT modes).
 Using `<Alt-V>` you can insert a hsl color anywhere (NORMAL and INSERT modes).
+Using `<Alt-W>` you can insert a rgba color anywhere (NORMAL and INSERT modes).
 
 Please refer to the documentation for a full overview of the plugin.
 
